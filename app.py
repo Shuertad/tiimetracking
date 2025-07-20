@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel
 import os
-from embedding import get_embedding
+from embeddings import get_embedding
 from xano import fetch_categories
 from categorizer import suggest_categories, generate_category_embeddings
 
