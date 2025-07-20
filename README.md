@@ -1,3 +1,3 @@
-# tiimetracking
+# Timetracking
 <br>
 Event automapping script
