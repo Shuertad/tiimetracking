@@ -1,26 +1,22 @@
-from flask import Flask, request, jsonify
-from utils.fetch import fetch_categories
-from utils.embeddings import get_embedding, generate_category_embeddings
-from utils.suggest import suggest_categories
+from fastapi import FastAPI, HTTPException, Request
+from pydantic import BaseModel
+import os
+from embedding import get_embedding
+from xano import fetch_categories
+from categorizer import suggest_categories, generate_category_embeddings
 
-app = Flask(__name__)
+app = FastAPI()
 
-@app.route("/suggest", methods=["POST"])
-def suggest():
-    data = request.json
-    event_name = data.get("event_name")
-    email = data.get("email")
-    user_token = data.get("user_token")
+class EventInput(BaseModel):
+    title: str
+    email: str
+    userToken: str
 
-    if not all([event_name, email, user_token]):
-        return jsonify({"error": "Missing required fields"}), 400
-
+@app.post("/suggest")
+def suggest(event: EventInput):
     try:
-        categories = generate_category_embeddings(email, user_token)
-        suggestion = suggest_categories(event_name, categories)
-        return jsonify(suggestion)
+        embedded_categories = generate_category_embeddings(event.email, event.userToken)
+        suggestions = suggest_categories(event.title, embedded_categories)
+        return {"suggestions": suggestions}
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-if __name__ == "__main__":
-    app.run(debug=True)
+        raise HTTPException(status_code=500, detail=str(e))
