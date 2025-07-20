@@ -1,5 +1,5 @@
 import numpy as np
-from embedding import get_embedding
+from embeddings import get_embedding
 from xano import fetch_categories
 
 def cosine_similarity(a, b):
