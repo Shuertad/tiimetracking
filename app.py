@@ -17,6 +17,6 @@ def suggest(event: EventInput):
     try:
         embedded_categories = generate_category_embeddings(event.email, event.userToken)
         suggestions = suggest_categories(event.title, embedded_categories)
-        return {"suggestions": suggestions}
+        return suggestions
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
